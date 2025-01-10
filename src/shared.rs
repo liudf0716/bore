@@ -4,10 +4,8 @@ use std::time::Duration;
 
 use anyhow::{Context, Result};
 use futures_util::{SinkExt, StreamExt};
-use serde::de::DeserializeOwned;
-use serde::{Deserialize, Serialize};
+use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use tokio::io::{self, AsyncRead, AsyncWrite};
-
 use tokio::time::timeout;
 use tokio_util::codec::{AnyDelimiterCodec, Framed, FramedParts};
 use tracing::trace;
@@ -16,7 +14,7 @@ use uuid::Uuid;
 /// TCP port used for control connections with the server.
 pub const CONTROL_PORT: u16 = 7835;
 
-/// Maxmium byte length for a JSON frame in the stream.
+/// Maximum byte length for a JSON frame in the stream.
 pub const MAX_FRAME_LENGTH: usize = 256;
 
 /// Timeout for network connections and initial protocol messages.
@@ -69,8 +67,8 @@ impl<U: AsyncRead + AsyncWrite + Unpin> Delimited<U> {
         trace!("waiting to receive json message");
         if let Some(next_message) = self.0.next().await {
             let byte_message = next_message.context("frame error, invalid byte length")?;
-            let serialized_obj = serde_json::from_slice(&byte_message.to_vec())
-                .context("unable to parse message")?;
+            let serialized_obj =
+                serde_json::from_slice(&byte_message).context("unable to parse message")?;
             Ok(serialized_obj)
         } else {
             Ok(None)

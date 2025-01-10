@@ -1,6 +1,6 @@
 # bore
 
-[![Build status](https://img.shields.io/github/workflow/status/ekzhang/bore/CI)](https://github.com/ekzhang/bore/actions)
+[![Build status](https://img.shields.io/github/actions/workflow/status/ekzhang/bore/ci.yml)](https://github.com/ekzhang/bore/actions)
 [![Crates.io](https://img.shields.io/crates/v/bore-cli.svg)](https://crates.io/crates/bore-cli)
 
 A modern, simple TCP tunnel in Rust that exposes local ports to a remote server, bypassing standard NAT connection firewalls. **That's all it does: no more, and no less.**
@@ -19,14 +19,14 @@ This will expose your local port at `localhost:8000` to the public internet at `
 
 Similar to [localtunnel](https://github.com/localtunnel/localtunnel) and [ngrok](https://ngrok.io/), except `bore` is intended to be a highly efficient, unopinionated tool for forwarding TCP traffic that is simple to install and easy to self-host, with no frills attached.
 
-(`bore` totals less than 400 lines of safe, async Rust code and is trivial to set up — just run a single binary for the client and server.)
+(`bore` totals about 400 lines of safe, async Rust code and is trivial to set up — just run a single binary for the client and server.)
 
 ## Installation
 
-If you're on macOS, `bore` is packaged as a Homebrew formula.
+If you're on macOS, `bore` is packaged as a Homebrew core formula.
 
 ```shell
-brew install ekzhang/bore/bore
+brew install bore-cli
 ```
 
 Otherwise, the easiest way to install bore is from prebuilt binaries. These are available on the [releases page](https://github.com/ekzhang/bore/releases) for macOS, Windows, and Linux. Just unzip the appropriate file for your platform and move the `bore` executable into a folder on your PATH.
@@ -37,7 +37,7 @@ You also can build `bore` from source using [Cargo](https://doc.rust-lang.org/ca
 cargo install bore-cli
 ```
 
-We also publish versioned Docker images for each release. Each image is built for AMD 64-bit and Arm 64-bit architectures. They're tagged with the specific version and allow you to run the statically-linked `bore` binary from a minimal "scratch" container.
+We also publish versioned Docker images for each release. The image is built for an AMD 64-bit architecture. They're tagged with the specific version and allow you to run the statically-linked `bore` binary from a minimal "scratch" container.
 
 ```shell
 docker run -it --init --rm --network host ekzhang/bore <ARGS>
@@ -60,22 +60,19 @@ You can optionally pass in a `--port` option to pick a specific port on the remo
 The full options are shown below.
 
 ```shell
-bore-local 0.4.0
 Starts a local proxy to the remote server
 
-USAGE:
-    bore local [OPTIONS] --to <TO> <LOCAL_PORT>
+Usage: bore local [OPTIONS] --to <TO> <LOCAL_PORT>
 
-ARGS:
-    <LOCAL_PORT>    The local port to expose
+Arguments:
+  <LOCAL_PORT>  The local port to expose
 
-OPTIONS:
-    -h, --help                 Print help information
-    -l, --local-host <HOST>    The local host to expose [default: localhost]
-    -p, --port <PORT>          Optional port on the remote server to select [default: 0]
-    -s, --secret <SECRET>      Optional secret for authentication [env: BORE_SECRET]
-    -t, --to <TO>              Address of the remote server to expose local ports to
-    -V, --version              Print version information
+Options:
+  -l, --local-host <HOST>  The local host to expose [default: localhost]
+  -t, --to <TO>            Address of the remote server to expose local ports to [env: BORE_SERVER=]
+  -p, --port <PORT>        Optional port on the remote server to select [default: 0]
+  -s, --secret <SECRET>    Optional secret for authentication [env: BORE_SECRET]
+  -h, --help               Print help information
 ```
 
 ### Self-Hosting
@@ -91,17 +88,15 @@ That's all it takes! After the server starts running at a given address, you can
 The full options for the `bore server` command are shown below.
 
 ```shell
-bore-server 0.4.0
 Runs the remote proxy server
 
-USAGE:
-    bore server [OPTIONS]
+Usage: bore server [OPTIONS]
 
-OPTIONS:
-    -h, --help                   Print help information
-        --min-port <MIN_PORT>    Minimum TCP port number to accept [default: 1024]
-    -s, --secret <SECRET>        Optional secret for authentication [env: BORE_SECRET]
-    -V, --version                Print version information
+Options:
+      --min-port <MIN_PORT>  Minimum accepted TCP port number [default: 1024, env: BORE_MIN_PORT]
+      --max-port <MAX_PORT>  Maximum accepted TCP port number [default: 65535, env: BORE_MAX_PORT]
+  -s, --secret <SECRET>      Optional secret for authentication [env: BORE_SECRET]
+  -h, --help                 Print help information
 ```
 
 ## Protocol
